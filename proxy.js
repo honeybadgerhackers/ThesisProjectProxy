@@ -1,15 +1,17 @@
-import { join } from 'path';
-
-const request = require(request);
-const express = require(express);
+const request = require('request');
+const express = require('express');
+const proxy = require('express-http-proxy');
 
 require('dotenv').config();
-
+const {PORT, APIURL} = process.env;
 const app = express();
 
+app.all('/*', proxy(`${APIURL}`, {
+  filter: () => {
+    return true;
+  }
+}));
 
-
-
-app.listen(process.env.PORT, () => {
-  console.info(`Listening on port ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.info(`Listening on port ${PORT}`);
 });
