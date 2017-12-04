@@ -3,10 +3,16 @@ const express = require('express');
 const proxy = require('express-http-proxy');
 
 require('dotenv').config();
-const {PORT, APIURL} = process.env;
+const {PORT, APIURL, AUTHURL} = process.env;
 const app = express();
 
-app.all('/*', proxy(`${APIURL}`, {
+app.post('/authorize', proxy(AUTHURL, {
+  filter: () => {
+    return true;
+  }
+}));
+
+app.all('/*', proxy(APIURL, {
   filter: () => {
     return true;
   }
