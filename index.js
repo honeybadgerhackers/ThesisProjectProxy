@@ -2,6 +2,7 @@ require('dotenv').config();
 const request = require('request-promise');
 const express = require('express');
 const proxy = require('express-http-proxy');
+const axios = require('axios');
 
 const { PORT, API_URL, AUTH_URL, REACT_NATIVE_PACKAGER_HOSTNAME } = process.env;
 
@@ -13,28 +14,27 @@ app.all('/', (req, res) => {
 
 app.post('/authorize', (req, res) => {
   req.on('data', async (chunk) => {
-    const authorized = await request({
+    const authorized = await axios({
       method: 'POST',
-      uri: AUTH_URL + '/authorize',
+      url: AUTH_URL + '/authorize',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: chunk,
-    }, (err, response, body) => {
-      if (err) {
-        return res.sendStatus(400)
-      }
-    }).then((body) => {
-      const userData = JSON.parse(body)
+      data: chunk,
+    }).then((response) => {
+      const userData = response.data;
+
       if (userData.type !== 'success!') {
         return 'failed';
       }
+
       const {
         id, email, first_name, last_name,
         picture: { data: { url: picture } },
         accessToken: { access_token, expires_in },
       } = userData; 
+
       return JSON.stringify({
         social_media_id: id,
         social_media_token: access_token,
@@ -44,27 +44,27 @@ app.post('/authorize', (req, res) => {
         picture,
       })
     }).catch((err) => {
+      console.log(err);
       return res.status(401).send('something went wrong!');
     })
+
     if (authorized === 'failed') {
+      console.log('authorize failed');
       return res.send(409);
     }
-    request({
+
+    return axios({
       method: 'POST',
-      uri: API_URL + '/user_account',
+      url: API_URL + '/user_account',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: authorized,
-    }, (err, response, body) => {
-      if (err) {
-        return res.sendStatus(400);
-      } else {
-        console.log(body, typeof body);
-        return res.send(body);
-      }
+      data: authorized,
+    }).then((response) => {
+      res.send(response.data);
     }).catch((err) => {
+      console.log(err);
       return res.status(401).send('something went wrong!');
     });
   })
