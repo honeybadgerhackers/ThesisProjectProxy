@@ -23,7 +23,7 @@ app.post('/authorize', (req, res) => {
       body: chunk,
     }, (err, response, body) => {
       if (err) {
-        res.sendStatus(400)
+        return res.sendStatus(400)
       }
     }).then((body) => {
       const userData = JSON.parse(body)
@@ -44,11 +44,10 @@ app.post('/authorize', (req, res) => {
         picture,
       })
     }).catch((err) => {
-      res.status(401).send('something went wrong!');
+      return res.status(401).send('something went wrong!');
     })
     if (authorized === 'failed') {
-      res.send(409);
-      return;
+      return res.send(409);
     }
     request({
       method: 'POST',
@@ -60,13 +59,13 @@ app.post('/authorize', (req, res) => {
       body: authorized,
     }, (err, response, body) => {
       if (err) {
-        res.sendStatus(400)
+        return res.sendStatus(400);
       } else {
         console.log(body, typeof body);
-        res.send(body);
+        return res.send(body);
       }
     }).catch((err) => {
-      res.status(401).send('something went wrong!');
+      return res.status(401).send('something went wrong!');
     });
   })
 });
