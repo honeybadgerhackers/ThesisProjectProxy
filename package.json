@@ -2,9 +2,9 @@
   "name": "thesisprojectproxy",
   "version": "1.0.0",
   "description": "",
-  "main": "proxy.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node proxy.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,10 +18,10 @@
   },
   "homepage": "https://github.com/Zacharygagnier/ThesisProjectProxy#readme",
   "dependencies": {
+    "axios": "^0.17.1",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
-    "express-http-proxy": "^1.1.0",
-    "request": "^2.83.0",
-    "request-promise": "^4.2.2"
-  }
+    "express-http-proxy": "^1.1.0"
+  },
+  "devDependencies": {}
 }
