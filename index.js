@@ -7,9 +7,11 @@ const { PORT, API_URL, AUTH_URL, REACT_NATIVE_PACKAGER_HOSTNAME } = process.env;
 
 const app = express();
 
-app.all('/', (req, res) => {
-  res.send('Hello');
-})
+app.use(express.static("client"));
+
+// app.all('/', (req, res) => {
+//   res.send('Hello');
+// })
 
 app.post('/authorize', (req, res) => {
   req.on('data', async (chunk) => {
